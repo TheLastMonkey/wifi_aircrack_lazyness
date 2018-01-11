@@ -2,7 +2,7 @@
 # WiFi aircrack laziness
 WiFi aircrack laziness is a lazy ass script to take the output for a given Target from airodump-ng (see output example below) and generate all the necessary aircrack commands for listening for handshakes and doing replays for DeAuthentication. 
 
-The script is designed to take an input from the user which can be typed out or copy and pasted in and if everything goes accordingly and if the inputs is clean meaning nothing like trailing spaces or anything out of the ordinary it should generate the commands and print them out to the terminal. It also additionally outputs the Mac address or bssid as well as the SSID so that you can visually confirm that it grab them correctly. I would suggest also confirming that the channel is correct in the outputted commands.
+The script is designed to take an input from the user which can be typed out or copy and pasted in and if everything goes accordingly and if the inputs is clean meaning nothing anything out of the ordinary it should generate the commands and print them out to the terminal. It also additionally outputs the Mac address or bssid as well as the SSID so that you can visually confirm that it grab them correctly. I would suggest also confirming that the channel is correct in the outputted commands.
 
 As stated before the script is for pure laziness purposes although it might speed up a workflow. I'm using this project to learn stuff so it's far from perfect I'm sure. If you see any issues or have any suggestions feel free to let me know.
 
