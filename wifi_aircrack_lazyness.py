@@ -21,15 +21,10 @@ def strip_bssid():
             bssid = (s[a.start(): a.end()])
 
 def strip_ssid():
-    global X
     global L
     global ssid
-    for s in L:
+    ssid = (derp.split()[-1])
 
-        a = re.compile(end_ssid).search(s)
-        if a:
-
-            ssid = (s[a.start(): a.end()])
 
 def get_ch():
     global ch
