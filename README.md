@@ -6,12 +6,6 @@ The script is designed to take an input from the user which can be typed out or 
 
 As stated before the script is for pure laziness purposes although it might speed up a workflow. I'm using this project to learn stuff so it's far from perfect I'm sure. If you see any issues or have any suggestions feel free to let me know.
 
-# One More Thing!
-Very Important!  
-The WiFi Interface is HARD-CODED!  
-So you will need to change that line of code manually.  
-(See Variable) `wifi_interface`  
-*This may get a update in the future.*
 
 ## Output from airodump-ng example:
 

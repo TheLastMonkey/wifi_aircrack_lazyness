@@ -1,6 +1,8 @@
+#!/usr/bin/python3
 import re
-
-derp = input("Put in the stuff: ")
+import os.path
+import os
+derp = input("DUMP your input to start: ")
 wifi_interface = "wlx00c0ca961581"
 ch = 0
 L = [derp]
@@ -8,6 +10,111 @@ X = '([a-fA-F0-9]{2}[:|\-]?){6}' # this is the regex
 bssid = 0
 end_ssid = '(\w+)$'
 ssid = 0
+
+
+def main():
+    os.system("clear")
+    global  wifi_interface
+    # Open a file
+    fo = open("inter_face.txt", "r+")
+    wifi_interface = fo.read()
+    # Close opened file
+    fo.close()
+    strip_bssid()
+    strip_ssid()
+    get_ch()
+    finelpirnt()
+
+
+
+def check():
+    global wifi_interface
+    if  os.path.exists("inter_face.txt")==True:
+        # Open a file
+        fo = open("inter_face.txt", "r+")
+        wifi_interface = fo.read()
+        # Close opened file
+        fo.close()
+        print("wifi interface is set to :",wifi_interface)
+
+        main()
+
+    else:
+        print("""
+HELLO welcome to first time config.
+lets get your wifi interface and save it.
+You can delete or mod the inter_face.txt file to reset 
+or just set it to what you want...
+Anyway
+====================
+1. wlan0mon
+2. wlan1mon
+3. mon0
+4. mon1
+U. user defined
+====================
+Input the Monitor Interface
+""")
+        do_this = input("choose :")
+        if do_this == "1":
+            print("setting to wlan0mon")
+            wifi_interface = "wlan0mon"
+            # Open a file
+            fo = open("inter_face.txt", "w+")
+            fo.write(wifi_interface)
+            # Close opend file
+            fo.close()
+            main()
+
+        elif do_this == "2":
+            print("setting to wlan1mon")
+            wifi_interface = "wlan1mon"
+            # Open a file
+            fo = open("inter_face.txt", "w+")
+            fo.write(wifi_interface)
+            # Close opend file
+            fo.close()
+            main()
+
+
+        elif do_this == "3":
+            print("setting to mon0")
+            wifi_interface = "mon0"
+            # Open a file
+            fo = open("inter_face.txt", "w+")
+            fo.write(wifi_interface)
+            # Close opend file
+            fo.close()
+            main()
+
+
+        elif do_this == "4":
+            print("setting to mon1")
+            wifi_interface = "mon1"
+            # Open a file
+            fo = open("inter_face.txt", "w+")
+            fo.write(wifi_interface)
+            # Close opend file
+            fo.close()
+            main()
+
+
+        elif do_this in ('U','u'):
+            wifi_interface = input("type in or interface: ")
+            # Open a file
+            fo = open("inter_face.txt", "w+")
+            fo.write(wifi_interface)
+            # Close opend file
+            fo.close()
+            main()
+
+        else:
+            print("How could you fuck this up?")
+            print("Im done with you.")
+
+
+
+
 def strip_bssid():
     global X
     global L
@@ -36,13 +143,16 @@ def get_ch():
 
 
 
-strip_bssid()
-strip_ssid()
-get_ch()
 
 
-print("MAC/BSSID of AP is:",bssid)
-print("SSID of AP is:",ssid)
+def finelpirnt():
+    global bssid,ssid,wifi_interface
+    print("WiFi Interface is set to :", wifi_interface)
+    print("MAC/BSSID of AP is:",bssid)
+    print("SSID of AP is:",ssid)
+    print("Commands Generated...\n")
 
-print("sudo airodump-ng -w",ssid,"--channel",ch,"--bssid",bssid,wifi_interface)
-print("sudo aireplay-ng -0 5 -e",ssid,wifi_interface)
+    print("sudo airodump-ng -w",ssid,"--channel",ch,"--bssid",bssid,wifi_interface)
+    print("sudo aireplay-ng -0 5 -e",ssid,wifi_interface)
+
+check()
