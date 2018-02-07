@@ -3,13 +3,27 @@ import re
 import os.path
 import os
 derp = input("DUMP your input to start: ")
-wifi_interface = 0
+wifi_interface = ''
 ch = 0
 L = [derp]
-X = '([a-fA-F0-9]{2}[:|\-]?){6}' # this is the regex
+X = '([a-fA-F0-9]{2}[:|\-]?){6}' # this is the regex macs or bssids
 bssid = 0
 end_ssid = '(\w+)$'
 ssid = 0
+monitor = False
+thewifiInterface = "Unknown"
+moitor = ''
+iwconfig = ''
+
+
+#######################################################################
+#mon[0-9]{1}        this may regex mon0 or mon1 so on up to 9
+#wlan[0-9]{1}       this may regex wlan0 or wlan1 so on up to 9
+#wlan[0-9]{1}mon    this may regex wlan0mon or wlan1mon so on up to 9
+#[\-]{1}[0-9]{2}    this may regex the signl
+#######################################################################
+#ifconfig | grep -E -o 'wlan[0-9]{1}'
+
 
 
 def main():
@@ -29,7 +43,7 @@ def main():
 
 def check():
     global wifi_interface
-    if  os.path.exists("inter_face.txt")==True:
+    if os.path.exists("inter_face.txt")==True:
         # Open a file
         fo = open("inter_face.txt", "r+")
         wifi_interface = fo.read()
@@ -38,8 +52,12 @@ def check():
 
 
         main()
-
     else:
+        print("Trying to Auto Detect Mon Interface")
+        iwconfig_file()
+
+
+def setupconfig():
         print("""
 HELLO welcome to first time config.
 lets get your wifi interface and save it.
@@ -161,13 +179,162 @@ def get_ch():
     ch = ch_is
 
 
+####################################################################################
 
 
+def iwconfig_file():
+    global iwconfig
+    global moitor
+    monitor = False
+    iwconfig = ''
+    os.system("iwconfig > iwconfig.txt ")
+    os.system("clear")
+    fo = open("iwconfig.txt", "r+")
+    iwconfig = fo.read()
+    fo.close()
+    # go to next func
+    test_for_muti_intherface()
+
+
+def test_for_muti_intherface():
+    global iwconfig
+    global moitor
+    muli_mon_test = re.findall(r'(wlan\d{1}mon)|(mon\d{1})|(wlan\d{1})', iwconfig)
+    print(muli_mon_test.__len__(), "Interface/s Found")
+    num_of_interface = muli_mon_test.__len__()  # debug
+
+    if num_of_interface == 1:
+        print("number of interface/s only 1")
+        # go to mon_checker
+        mon_checker()
+
+    elif num_of_interface > 1:
+        print("number of interfaces is more than 1")
+        mon_checker()
+        #setupconfig()
+
+    elif num_of_interface == 0:
+        print("Oh shit you have no Wireless interface... that sux")
+        setupconfig()
+
+    else:
+        print("fail 1")
+
+
+def mon_checker():
+    global monitor
+    global iwconfig
+
+    if re.search(r"Mode:Monitor", iwconfig):
+        monitor = True
+        print('Monitor Mode Auto Detected!!!')
+        interface_sifter()
+    else:
+        monitor = False
+        print("Monitor Mode >>NOT<< Auto Detected")
+        # ask if user wants to go to config or continue to ##interface_sifter()##
+        interface_sifter()
+
+
+def interface_sifter():
+    global iwconfig
+    global wifi_interface
+    global monitor
+    if re.search(r'(wlan\d{1}mon)|(mon\d{1})|(wlan\d{1})', iwconfig):
+        print("A Wireless Interface Has Been Detected...")
+        wifi_interface = re.search(r'(wlan\d{1}mon)|(mon\d{1})|(wlan\d{1})', iwconfig).group()
+        print("It looks like:", wifi_interface)
+
+        if re.search(r'(wlan\d{1}mon)|(mon\d{1})', wifi_interface):
+            print(wifi_interface, "Looks Good as a Monitor Interface")
+            save_interface_or = input("""
+Do you you want to... 
+1.Save this Interface
+or
+2.Go to Config and set you own
+Input 1 or 2 :""")
+            if save_interface_or == '1':
+
+                # Open a file
+                fo = open("inter_face.txt", "w+")
+                fo.write(wifi_interface)
+                # Close opend file
+                fo.close()
+                print("Saved")
+                # next func
+                main()
+
+            elif save_interface_or == '2':
+                print("Going to config...")
+                # go to config
+                setupconfig()
+            else:
+                os.system("clear")
+                print("Error you have Launched a NUKE!!!")
+                print("Try Again...")
+                interface_sifter()
+
+
+        elif re.search(r'wlan\d{1}', wifi_interface):
+            print(wifi_interface, "Look like an Wireless Interface BUT may or may not be in Monitor mode")
+            if monitor == True:
+                print('OK! So I Detect a Monitor Mode... So')
+                save_interface_or = input("""
+Do you you want to... 
+1.Save this Interface
+or
+2.Go to Config and set you own
+Input 1 or 2 :""")
+                if save_interface_or == '1':
+
+                    # Open a file
+                    fo = open("inter_face.txt", "w+")
+                    fo.write(wifi_interface)
+                    # Close opend file
+                    fo.close()
+                    print("Saved!    To Reset delete inter_face.txt")
+                    # next func
+                    main()
+
+                elif save_interface_or == '2':
+                    print("Going to config...")
+                    # go to config
+                    setupconfig()
+                else:
+                    os.system("clear")
+                    print("Error you have Launched a NUKE!!!")
+                    print("Try Again...")
+                    interface_sifter()
+                # Open a file
+                fo = open("inter_face.txt", "w+")
+                fo.write(wifi_interface)
+                # Close opend file
+                fo.close()
+
+                # next func
+                main()
+
+            else:
+                print(wifi_interface, """ Is not in Monitor Mode... 
+!!!Coming Soon!!! Put it in Monitor Mode for me ... if ran as root ... you fool""")
+                print("Going to Config...")
+                # go to config
+                setupconfig()
+
+        else:
+            print("fail")
+
+    else:
+        print("fail")
+
+
+###############################################################################################
 
 
 
 def finelpirnt():
     global bssid,ssid,wifi_interface
+    os.system("clear")
     print("""
 ==========
 INFO
